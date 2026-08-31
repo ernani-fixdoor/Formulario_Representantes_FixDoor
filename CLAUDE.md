@@ -144,26 +144,27 @@ tempo indeterminado — não existe rotina nenhuma apagando pastas antigas.
 
 ## Estado atual / TODO
 
-- [ ] Criar a conta do Google dedicada ao projeto (hospeda só o script agora).
-- [ ] Cadastrar o App Registration no Azure AD (Tenant ID, Client ID, Client Secret,
+- [x] Criar a conta do Google dedicada ao projeto (hospeda só o script agora).
+- [x] Cadastrar o App Registration no Azure AD (Tenant ID, Client ID, Client Secret,
       permissões `Sites.Selected` + `Mail.Send`, admin consent).
-- [ ] Conceder ao app acesso ao site do SharePoint específico (`Sites.Selected` não
+- [x] Conceder ao app acesso ao site do SharePoint específico (`Sites.Selected` não
       libera nada por padrão).
-- [ ] Criar a Lista `Representantes` no SharePoint (Representante | Senha | Emails) e
+- [x] Criar a Lista `Representantes` no SharePoint (Representante | Senha | Emails) e
       a pasta raiz de arquivos numa biblioteca de documentos.
-- [ ] Anotar Site ID, List ID, Drive ID e ID da pasta raiz.
-- [ ] Colar `apps-script/Code.gs` e `appsscript.json` no editor do Apps Script.
-- [ ] Cadastrar todas as chaves nas Propriedades do Script (nunca em `Code.gs`):
+- [x] Anotar Site ID, List ID, Drive ID e ID da pasta raiz.
+- [x] Colar `apps-script/Code.gs` e `appsscript.json` no editor do Apps Script.
+- [x] Cadastrar todas as chaves nas Propriedades do Script (nunca em `Code.gs`):
       `TENANT_ID`, `CLIENT_ID`, `CLIENT_SECRET`, `SITE_ID`, `LIST_ID`, `DRIVE_ID`,
       `PASTA_RAIZ_ID`, `REMETENTE_EMAIL`.
-- [ ] Publicar o Web App (Executar como: Eu / Quem pode acessar: Qualquer pessoa) e
+- [x] Publicar o Web App (Executar como: Eu / Quem pode acessar: Qualquer pessoa) e
       colar a URL em `js/app.js` (`APPS_SCRIPT_URL`).
 - [x] Implementar a upload session pra arquivos > 4 MB (ver "Pendências técnicas").
 - [x] Testar o fluxo ponta a ponta com uma senha de teste, incluindo um vídeo grande.
-- [ ] Ativar o GitHub Pages neste repositório (Settings → Pages → branch main → pasta
+- [x] Ativar o GitHub Pages neste repositório (Settings → Pages → branch main → pasta
       raiz).
 - [ ] Ajustar o CSS pra bater com a identidade visual da FixDoor (cores, logo).
-- [ ] Ligar a página do Framer a este formulário (link ou iframe).
+- [x] Ligar a página do Framer a este formulário (link ou iframe) — embed adicionado
+      direto na página do Framer.
 
 ## Preferências de quem está construindo isso
 
