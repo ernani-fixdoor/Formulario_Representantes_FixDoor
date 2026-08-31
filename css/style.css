@@ -104,7 +104,6 @@ button {
 button:disabled { opacity: 0.6; cursor: default; }
 
 .spinner {
-  display: inline-block;
   width: 1em;
   height: 1em;
   margin-left: 0.5rem;
@@ -113,6 +112,10 @@ button:disabled { opacity: 0.6; cursor: default; }
   border-top-color: #fff;
   border-radius: 50%;
   animation: girar 0.7s linear infinite;
+}
+
+.spinner:not([hidden]) {
+  display: inline-block;
 }
 
 @keyframes girar {
