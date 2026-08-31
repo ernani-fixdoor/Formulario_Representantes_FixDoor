@@ -95,14 +95,18 @@ tempo indeterminado — não existe rotina nenhuma apagando pastas antigas.
 
 ## Pendências técnicas conhecidas
 
-- **Upload de arquivo grande**: ✅ implementado. Arquivos ≤ 4 MB usam PUT direto;
-  acima disso, `uploadArquivoGrande` (em `Code.gs`) cria uma "upload session"
-  (`createUploadSession`) e envia o arquivo em pedaços de 10 MB via PUT direto na
-  `uploadUrl` devolvida (sem passar pelo `chamarGraph`, já que essa URL já vem
-  pré-autenticada). Ainda não testado com um vídeo grande de verdade em produção —
-  ver TODO "Testar o fluxo ponta a ponta" abaixo. Ponto de atenção: o Apps Script tem
-  limite de 6 minutos de execução por chamada; um vídeo muito grande com conexão
-  lenta pode estourar esse limite (sem retry automático em caso de erro transitório).
+- **Upload de arquivo grande**: ✅ implementado e testado ponta a ponta (vídeo de
+  36 MB). Arquivos ≤ 4 MB usam PUT direto; acima disso, `uploadArquivoGrande` (em
+  `Code.gs`) cria uma "upload session" (`createUploadSession`) e envia o arquivo em
+  pedaços de 10 MB via PUT direto na `uploadUrl` devolvida (sem passar pelo
+  `chamarGraph`, já que essa URL já vem pré-autenticada). Ponto de atenção: o Apps
+  Script tem limite de 6 minutos de execução por chamada; um vídeo muito grande com
+  conexão lenta pode estourar esse limite (sem retry automático em caso de erro
+  transitório).
+  - **Pegadinha do `UrlFetchApp`**: não dá pra setar o header `Content-Length`
+    manualmente (o Apps Script calcula sozinho e lança
+    `Exception: Atributo fornecido com valor inválido: Header:Content-Length` se
+    você tentar) — só `Content-Range` é necessário no PUT de cada pedaço.
 - **Renovação do Client Secret**: tem validade (normalmente até 2 anos) e precisa ser
   trocado antes de vencer, ou o porteiro para de autenticar.
 - **Cota de chamadas**: cada envio de formulário agora faz várias chamadas
@@ -155,7 +159,7 @@ tempo indeterminado — não existe rotina nenhuma apagando pastas antigas.
 - [ ] Publicar o Web App (Executar como: Eu / Quem pode acessar: Qualquer pessoa) e
       colar a URL em `js/app.js` (`APPS_SCRIPT_URL`).
 - [x] Implementar a upload session pra arquivos > 4 MB (ver "Pendências técnicas").
-- [ ] Testar o fluxo ponta a ponta com uma senha de teste, incluindo um vídeo grande.
+- [x] Testar o fluxo ponta a ponta com uma senha de teste, incluindo um vídeo grande.
 - [ ] Ativar o GitHub Pages neste repositório (Settings → Pages → branch main → pasta
       raiz).
 - [ ] Ajustar o CSS pra bater com a identidade visual da FixDoor (cores, logo).

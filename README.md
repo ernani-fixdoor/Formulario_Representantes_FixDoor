@@ -95,9 +95,13 @@ ainda não foi testado com um vídeo grande de verdade em produção. Ver o TODO
   direto a Lista do SharePoint — não precisa mexer em código.
 - **Mudar campos do formulário**: edite `index.html`, `css/style.css` e
   `js/app.js`, e publique com o GitHub Desktop (commit + push).
-- **Mudar a lógica do backend**: edite `apps-script/Code.gs` aqui, e
-  depois cole a versão atualizada no editor do Apps Script (ou use o
-  `clasp` para sincronizar por linha de comando).
+- **Mudar a lógica do backend**: edite `apps-script/Code.gs` aqui, cole a
+  versão atualizada no editor do Apps Script (ou use o `clasp` para
+  sincronizar por linha de comando) e salve. **Importante**: salvar não é
+  suficiente — a URL do Web App já publicada continua rodando a versão
+  antiga até você ir em Implantar → Gerenciar implantações → editar a
+  implantação existente → trocar para "Nova versão" → Implantar. Sem esse
+  passo, a mudança nunca chega a valer na prática.
 
 ## Segurança
 

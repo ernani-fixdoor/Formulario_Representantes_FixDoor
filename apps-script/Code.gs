@@ -234,7 +234,6 @@ function uploadArquivoGrande(driveId, pastaId, arquivo, bytes) {
     const resposta = UrlFetchApp.fetch(uploadUrl, {
       method: 'put',
       headers: {
-        'Content-Length': String(pedaco.length),
         'Content-Range': 'bytes ' + inicio + '-' + fim + '/' + total
       },
       payload: pedaco,
