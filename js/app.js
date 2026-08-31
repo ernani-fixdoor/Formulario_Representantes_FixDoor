@@ -194,6 +194,7 @@ function iniciarNovaSolicitacao() {
   btnEnviar.hidden = false;
   btnNovaSolicitacao.hidden = true;
   statusEl.hidden = true;
+  statusEl.className = '';
 }
 
 btnNovaSolicitacao.addEventListener('click', iniciarNovaSolicitacao);
@@ -207,6 +208,7 @@ form.addEventListener('submit', async (ev) => {
   }
 
   statusEl.hidden = false;
+  statusEl.className = '';
   statusEl.textContent = 'Enviando...';
   btnEnviar.disabled = true;
   spinnerEnviar.hidden = false;
@@ -220,13 +222,16 @@ form.addEventListener('submit', async (ev) => {
   try {
     const resultado = await chamarBackend('enviarOrcamento', dados);
     if (resultado.ok) {
-      statusEl.textContent = 'Orçamento enviado com sucesso!';
+      statusEl.textContent = '✓ Orçamento enviado com sucesso!';
+      statusEl.className = 'sucesso';
       finalizarComoEnviado();
     } else {
       statusEl.textContent = 'Erro ao enviar. Tente de novo.';
+      statusEl.className = 'erro-envio';
     }
   } catch (erro) {
     statusEl.textContent = 'Erro ao enviar. Tente de novo.';
+    statusEl.className = 'erro-envio';
   } finally {
     btnEnviar.disabled = false;
     spinnerEnviar.hidden = true;

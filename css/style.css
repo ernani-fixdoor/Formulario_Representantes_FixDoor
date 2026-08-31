@@ -202,3 +202,22 @@ fieldset:disabled { opacity: 0.5; }
   font-size: 0.9rem;
   text-align: center;
 }
+
+#form-status.sucesso {
+  padding: 1.1rem;
+  background: #e7f6ec;
+  color: #1e7e34;
+  border: 1px solid #bfe6cb;
+  border-radius: var(--raio);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+#form-status.erro-envio {
+  padding: 0.85rem;
+  background: #fdecea;
+  color: var(--erro);
+  border: 1px solid #f3c6c1;
+  border-radius: var(--raio);
+  font-weight: 600;
+}

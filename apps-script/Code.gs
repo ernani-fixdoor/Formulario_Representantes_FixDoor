@@ -136,7 +136,7 @@ function enviarOrcamento(dados) {
   const rep = buscarRepresentantePorNome(dados.representante);
   if (!rep) return { ok: false, erro: 'Representante não encontrado' };
 
-  const pastaEnvio = salvarArquivosNoSharePoint(dados.anexos || [], dados.representante, dados.nome_solicitante);
+  const pastaEnvio = salvarArquivosNoSharePoint(dados.anexos || [], dados.representante, dados.nome_cliente);
   enviarEmailGraph(rep.emails, dados, pastaEnvio.webUrl);
 
   return { ok: true };
@@ -149,18 +149,18 @@ function enviarOrcamento(dados) {
 //
 // <Pasta raiz>
 //   └── <Representante>
-//         └── <2026-08-29_1430 - Nome do solicitante>
+//         └── <2026-08-29_1430 - Nome do cliente>
 //               ├── foto1.jpg
 //               └── video1.mp4
 
-function salvarArquivosNoSharePoint(anexos, representante, nomeSolicitante) {
+function salvarArquivosNoSharePoint(anexos, representante, nomeCliente) {
   const driveId = getConfig('DRIVE_ID');
   const pastaRaizId = getConfig('PASTA_RAIZ_ID');
 
   const pastaRepresentante = getOuCriarSubpasta(driveId, pastaRaizId, representante);
 
   const carimbo = Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyy-MM-dd_HHmm');
-  const nomePasta = carimbo + ' - ' + (nomeSolicitante || 'sem nome');
+  const nomePasta = carimbo + ' - ' + (nomeCliente || 'sem nome');
   const pastaEnvio = criarSubpasta(driveId, pastaRepresentante.id, nomePasta);
 
   (anexos || []).forEach(function (arquivo) {
@@ -263,7 +263,7 @@ function enviarEmailGraph(emails, dados, linkPasta) {
     contentType: 'application/json',
     payload: JSON.stringify({
       message: {
-        subject: 'Nova solicitação de orçamento — ' + dados.representante,
+        subject: dados.representante + ' - Solicitação de Orçamento',
         body: { contentType: 'HTML', content: montarCorpoEmail(dados, linkPasta) },
         toRecipients: destinatarios
       }
@@ -271,13 +271,72 @@ function enviarEmailGraph(emails, dados, linkPasta) {
   });
 }
 
+// Rótulo amigável de cada campo do formulário, pra não aparecer o nome interno
+// (ex.: "nome_cliente") cru no e-mail. Campo sem rótulo aqui usa o próprio nome.
+const RUTULOS_CAMPOS = {
+  equipamento: 'Equipamento',
+  nome_cliente: 'Nome do cliente',
+  cnpj_cliente: 'CNPJ do cliente',
+  inscricao_estadual: 'Inscrição Estadual',
+  destinacao_fiscal: 'Destinação fiscal do equipamento',
+  email_cliente: 'E-mail do cliente',
+  telefone_cliente: 'Telefone do cliente',
+  estado: 'Estado',
+  cidade: 'Cidade',
+  frete: 'Frete',
+  instalacao: 'Instalação',
+  valor_instalacao: 'Valor da instalação por equipamento',
+  rebatimento: 'Rebatimento',
+  quantidade_portas: 'Quantidade de portas',
+  quantidade_portais: 'Quantidade de portais',
+  largura_vao: 'Largura do vão (mm)',
+  altura_vao: 'Altura do vão (mm)',
+  pe_direito: 'Pé direito (mm)',
+  tipo_acionamento: 'Tipo de acionamento',
+  numero_visores: 'Número de visores',
+  estrutura_coluna: 'Estrutura da coluna/parede',
+  estrutura_teto: 'Estrutura do teto',
+  modelo_portal: 'Modelo do portal',
+  acessorios: 'Acessórios',
+  acessorios_estruturais: 'Acessórios estruturais',
+  observacoes: 'Observações'
+};
+
+const CAMPOS_IGNORADOS_NO_EMAIL = ['anexos', 'representante', 'acao'];
+
 function montarCorpoEmail(dados, linkPasta) {
-  let corpo = '<h2>Nova solicitação — ' + dados.representante + '</h2><ul>';
+  const enviadoEm = Utilities.formatDate(new Date(), 'America/Sao_Paulo', "dd/MM/yyyy 'às' HH:mm");
+
+  let linhas = '';
   Object.keys(dados).forEach(function (chave) {
-    if (chave === 'anexos' || chave === 'representante' || chave === 'acao') return;
-    corpo += '<li><strong>' + chave + ':</strong> ' + dados[chave] + '</li>';
+    if (CAMPOS_IGNORADOS_NO_EMAIL.indexOf(chave) !== -1) return;
+    const valor = dados[chave];
+    if (valor === undefined || valor === null || valor === '') return;
+
+    const rotulo = RUTULOS_CAMPOS[chave] || chave;
+    const valorSeguro = escaparHtml(String(valor)).replace(/\n/g, '<br>');
+    linhas +=
+      '<tr>' +
+      '<td style="padding:8px 12px;border:1px solid #ecdfd5;background:#fff8f3;font-weight:600;white-space:nowrap;">' +
+      escaparHtml(rotulo) +
+      '</td>' +
+      '<td style="padding:8px 12px;border:1px solid #ecdfd5;">' + valorSeguro + '</td>' +
+      '</tr>';
   });
-  corpo += '</ul>';
-  corpo += '<p><strong>Fotos e vídeos:</strong> <a href="' + linkPasta + '">' + linkPasta + '</a></p>';
-  return corpo;
+
+  return (
+    '<div style="font-family:Arial,Helvetica,sans-serif;color:#2b1d15;">' +
+    '<p style="margin:0 0 16px;color:#8a7266;font-size:13px;">Enviado em ' + enviadoEm + '</p>' +
+    '<table style="border-collapse:collapse;width:100%;max-width:640px;">' + linhas + '</table>' +
+    '<p style="margin-top:16px;"><strong>Fotos e vídeos:</strong> <a href="' + linkPasta + '">' + linkPasta + '</a></p>' +
+    '</div>'
+  );
+}
+
+function escaparHtml(texto) {
+  return texto
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
