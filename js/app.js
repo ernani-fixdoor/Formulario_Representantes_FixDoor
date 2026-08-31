@@ -133,9 +133,7 @@ document.querySelectorAll('[data-max-digitos]').forEach((input) => {
 });
 
 // ===== Portão de senha =====
-
-const repSalvo = sessionStorage.getItem('representante');
-if (repSalvo) mostrarFormulario(repSalvo);
+// Sempre pede senha ao abrir a página — não persiste login entre carregamentos.
 
 btnEntrar.addEventListener('click', validarSenha);
 senhaInput.addEventListener('keydown', (ev) => {
@@ -152,7 +150,6 @@ async function validarSenha() {
   try {
     const resposta = await chamarBackend('validarSenha', { senha });
     if (resposta.ok) {
-      sessionStorage.setItem('representante', resposta.representante);
       mostrarFormulario(resposta.representante);
     } else {
       gateErro.textContent = 'Senha incorreta. Tente de novo.';
@@ -216,6 +213,7 @@ form.addEventListener('submit', async (ev) => {
 
   const dados = Object.fromEntries(new FormData(form).entries());
   dados.acessorios = [...form.querySelectorAll('input[name="acessorios"]:checked')].map((el) => el.value).join(', ');
+  dados.acessorios_estruturais = [...form.querySelectorAll('input[name="acessorios_estruturais"]:checked')].map((el) => el.value).join(', ');
   const arquivos = anexosInput.files;
   dados.anexos = await Promise.all([...arquivos].map(paraBase64));
 

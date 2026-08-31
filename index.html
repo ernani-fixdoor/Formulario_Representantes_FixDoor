@@ -4,13 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FixDoor — Solicitação de Orçamentos para Representantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="topo">
+  <img src="img/logo-fixdoor.png" alt="FixDoor" class="logo" id="logo-fixdoor" hidden>
   <h1>Formulário de Solicitação de Orçamentos para Representantes FixDoor</h1>
-  <p>Portas Seccionais e Portais de Selamento</p>
 </header>
 
 <!-- Portão de senha -->
@@ -45,6 +48,21 @@
            placeholder="00.000.000/0000-00" maxlength="18"
            pattern="\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}"
            title="Digite os 14 números do CNPJ" required>
+
+    <label for="inscricao_estadual">Inscrição Estadual</label>
+    <select id="inscricao_estadual" name="inscricao_estadual" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Sim">Sim</option>
+      <option value="Não">Não</option>
+    </select>
+
+    <label for="destinacao_fiscal">Destinação fiscal do equipamento</label>
+    <select id="destinacao_fiscal" name="destinacao_fiscal" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Uso e consumo">Uso e consumo</option>
+      <option value="Ativo imobilizado">Ativo imobilizado</option>
+      <option value="Revenda">Revenda</option>
+    </select>
 
     <label for="email_cliente">E-mail do cliente</label>
     <input type="email" id="email_cliente" name="email_cliente" required>
@@ -154,16 +172,13 @@
       <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
     </select>
 
-    <label for="acessorios_seccional">Acessórios</label>
-    <select id="acessorios_seccional" name="acessorios_dropdown">
-      <option value="">Nenhum</option>
-      <option value="Sensor de tráfego">Sensor de tráfego</option>
-      <option value="Sensor Pressostato">Sensor Pressostato</option>
-    </select>
+    <label>Acessórios</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="Sensor de tráfego"> Sensor de tráfego</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="Sensor Pressostato"> Sensor Pressostato</label>
 
     <label>Acessórios estruturais</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="estrutura_metalica"> Estrutura metálica</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="mao_francesa"> Mão francesa</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios_estruturais" value="Estrutura metálica"> Estrutura metálica</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios_estruturais" value="Mão francesa"> Mão francesa</label>
 
     <label for="observacoes_seccional">Observações</label>
     <textarea id="observacoes_seccional" name="observacoes" rows="4"></textarea>
@@ -193,12 +208,9 @@
       <option value="Especial">Especial</option>
     </select>
 
-    <label for="acessorios_portal">Acessórios</label>
-    <select id="acessorios_portal" name="acessorios_dropdown" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="Bolsão triangular">Bolsão triangular</option>
-      <option value="Estrutura metálica">Estrutura metálica</option>
-    </select>
+    <label>Acessórios</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="Bolsão triangular"> Bolsão triangular</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="Estrutura metálica"> Estrutura metálica</label>
 
     <label for="estrutura_coluna_portal">Estrutura da coluna/parede</label>
     <select id="estrutura_coluna_portal" name="estrutura_coluna" required>

@@ -1,38 +1,52 @@
 :root {
-  --tinta: #1f2933;
-  --tinta-suave: #52606d;
-  --linha: #d9dde1;
-  --fundo: #f5f6f7;
+  --tinta: #2b1d15;
+  --tinta-suave: #8a7266;
+  --linha: #ecdfd5;
+  --fundo: #fff8f3;
   --cartao: #ffffff;
-  --acento: #2b5f6b;
-  --erro: #b3261e;
-  --raio: 6px;
+  --acento: #f2660d;
+  --acento-escuro: #d1520a;
+  --acento-claro: #ffe6d3;
+  --erro: #c0392b;
+  --raio: 8px;
+  --fonte-base: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-apoio: 'Google Sans Code', 'Inter', system-ui, monospace;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--fonte-base);
   background: var(--fundo);
   color: var(--tinta);
   line-height: 1.5;
 }
 
 .topo {
-  padding: 2rem 1.25rem 1rem;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 1rem;
   text-align: center;
 }
 
-.topo h1 {
-  margin: 0 0 0.25rem;
-  font-size: 1.5rem;
-  font-weight: 600;
+.topo .logo {
+  height: 52px;
+  width: auto;
+  margin: 0 auto 1.25rem;
 }
 
-.topo p {
+.topo .logo:not([hidden]) {
+  display: block;
+}
+
+.topo h1 {
   margin: 0;
-  color: var(--tinta-suave);
+  font-family: var(--fonte-apoio);
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--tinta);
 }
 
 .cartao {
@@ -71,6 +85,10 @@ input, select, textarea {
   color: var(--tinta);
 }
 
+textarea {
+  resize: vertical;
+}
+
 input:focus, select:focus, textarea:focus {
   outline: 2px solid var(--acento);
   outline-offset: 1px;
@@ -83,7 +101,9 @@ fieldset {
 }
 
 fieldset legend {
+  font-family: var(--fonte-apoio);
   font-weight: 600;
+  color: var(--acento-escuro);
   padding: 0;
   margin-bottom: 0.25rem;
 }
@@ -96,10 +116,13 @@ button {
   color: #fff;
   border: none;
   border-radius: var(--raio);
+  font-family: var(--fonte-apoio);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
 }
+
+button:hover:not(:disabled) { background: var(--acento-escuro); }
 
 button:disabled { opacity: 0.6; cursor: default; }
 
@@ -120,6 +143,11 @@ fieldset:disabled { opacity: 0.5; }
   border: 1px solid var(--linha);
 }
 
+.toggle-btn:hover:not(:disabled) {
+  background: var(--acento-claro);
+  border-color: var(--acento);
+}
+
 .toggle-btn.ativo {
   background: var(--acento);
   color: #fff;
@@ -128,8 +156,12 @@ fieldset:disabled { opacity: 0.5; }
 
 .btn-secundario {
   background: transparent;
-  color: var(--acento);
+  color: var(--acento-escuro);
   border: 1px solid var(--acento);
+}
+
+.btn-secundario:hover:not(:disabled) {
+  background: var(--acento-claro);
 }
 
 .spinner {
