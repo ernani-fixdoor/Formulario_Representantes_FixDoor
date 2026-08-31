@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FixDoor — Solicitação de orçamento</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topo">
+  <h1>Solicitação de orçamento</h1>
+  <p>Portas Seccionais e Portais de Selamento</p>
+</header>
+
+<!-- Portão de senha -->
+<section id="gate" class="cartao">
+  <label for="senha">Senha do representante</label>
+  <input type="password" id="senha" autocomplete="off" placeholder="Digite sua senha">
+  <button id="btn-entrar" type="button">Entrar</button>
+  <p id="gate-erro" class="erro" hidden>Senha incorreta. Tente de novo.</p>
+</section>
+
+<!-- Formulário (fica escondido até a senha ser validada) -->
+<form id="formulario" class="cartao" hidden>
+  <p class="representante-atual">Representante: <strong id="nome-representante"></strong></p>
+  <input type="hidden" id="representante" name="representante">
+
+  <label for="tipo">Tipo de solicitação</label>
+  <select id="tipo" name="tipo">
+    <option value="seccional">Porta Seccional | Nova</option>
+    <option value="portal">Portal de Selamento</option>
+  </select>
+
+  <fieldset>
+    <legend>Dados do cliente</legend>
+
+    <label for="nome_solicitante">Nome do solicitante</label>
+    <input type="text" id="nome_solicitante" name="nome_solicitante" required>
+
+    <label for="email_cliente">E-mail do cliente</label>
+    <input type="email" id="email_cliente" name="email_cliente" required>
+
+    <label for="telefone_cliente">Telefone do cliente</label>
+    <input type="tel" id="telefone_cliente" name="telefone_cliente">
+
+    <label for="cnpj_cliente">CNPJ do cliente</label>
+    <input type="text" id="cnpj_cliente" name="cnpj_cliente">
+
+    <label for="cidade">Cidade</label>
+    <input type="text" id="cidade" name="cidade">
+
+    <label for="estado">Estado</label>
+    <input type="text" id="estado" name="estado" maxlength="2" placeholder="UF">
+
+    <label for="frete">Frete?</label>
+    <select id="frete" name="frete">
+      <option value="sim">Sim</option>
+      <option value="nao">Não</option>
+    </select>
+
+    <label for="mao_de_obra">Mão de obra?</label>
+    <select id="mao_de_obra" name="mao_de_obra">
+      <option value="sim">Sim</option>
+      <option value="nao">Não</option>
+    </select>
+  </fieldset>
+
+  <!-- Campos técnicos: aparecem quando "Tipo" = Porta Seccional -->
+  <fieldset id="campos-seccional">
+    <legend>Especificações técnicas</legend>
+
+    <label for="quantidade_portas">Quantidade de portas</label>
+    <input type="number" id="quantidade_portas" name="quantidade_portas" min="1">
+
+    <label for="largura_vao">Largura do vão (mm)</label>
+    <input type="number" id="largura_vao" name="largura_vao">
+
+    <label for="altura_vao">Altura do vão (mm)</label>
+    <input type="number" id="altura_vao" name="altura_vao">
+
+    <label for="pe_direito">Pé direito (mm)</label>
+    <input type="number" id="pe_direito" name="pe_direito">
+
+    <label for="tipo_acionamento">Tipo de acionamento</label>
+    <select id="tipo_acionamento" name="tipo_acionamento">
+      <option value="manual">Manual</option>
+      <option value="motorizada">Motorizada</option>
+      <option value="talha">Talha</option>
+    </select>
+
+    <label for="numero_visores">Número de visores</label>
+    <select id="numero_visores" name="numero_visores">
+      <option>0</option><option>1</option><option>2</option><option>3</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option>
+      <option>9</option><option>10</option>
+    </select>
+
+    <label for="rebatimento">Rebatimento</label>
+    <select id="rebatimento" name="rebatimento">
+      <option value="VL">VL</option>
+      <option value="HL">HL</option>
+      <option value="SL">SL</option>
+      <option value="LH">LH</option>
+    </select>
+
+    <label>Acessórios estruturais</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="estrutura_metalica"> Estrutura metálica</label>
+    <label class="checkbox"><input type="checkbox" name="acessorios" value="mao_francesa"> Mão francesa</label>
+
+    <label for="estrutura_coluna">Estrutura da coluna/parede</label>
+    <select id="estrutura_coluna" name="estrutura_coluna">
+      <option value="isopainel">Isopainel</option>
+      <option value="bloco_grauteado">Bloco grauteado</option>
+      <option value="bloco_oco">Bloco oco</option>
+      <option value="placa_cimenticia">Placa cimentícia</option>
+      <option value="metalon">Metalon (tubo)</option>
+      <option value="metalica_perfil_aberto">Metálica - Perfil Aberto</option>
+    </select>
+  </fieldset>
+
+  <label for="observacoes">Itens extra e observações</label>
+  <textarea id="observacoes" name="observacoes" rows="4"></textarea>
+
+  <label for="anexos">Fotos e vídeos</label>
+  <input type="file" id="anexos" name="anexos" multiple accept="image/*,video/*">
+  <p class="dica">Pode selecionar mais de um arquivo.</p>
+
+  <button type="submit">Enviar solicitação</button>
+  <p id="form-status" hidden></p>
+</form>
+
+<script src="js/app.js"></script>
+</body>
+</html>
