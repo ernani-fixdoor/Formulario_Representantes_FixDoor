@@ -10,7 +10,6 @@
   --erro: #c0392b;
   --raio: 8px;
   --fonte-base: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
-  --fonte-apoio: 'Google Sans Code', 'Inter', system-ui, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -42,7 +41,6 @@ body {
 
 .topo h1 {
   margin: 0;
-  font-family: var(--fonte-apoio);
   font-size: 2.1rem;
   font-weight: 700;
   line-height: 1.25;
@@ -101,7 +99,6 @@ fieldset {
 }
 
 fieldset legend {
-  font-family: var(--fonte-apoio);
   font-weight: 600;
   color: var(--acento-escuro);
   padding: 0;
@@ -116,7 +113,6 @@ button {
   color: #fff;
   border: none;
   border-radius: var(--raio);
-  font-family: var(--fonte-apoio);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
