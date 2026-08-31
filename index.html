@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FixDoor — Solicitação de orçamento</title>
+<title>FixDoor — Solicitação de Orçamentos para Representantes</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="topo">
-  <h1>Solicitação de orçamento</h1>
+  <h1>Formulário de Solicitação de Orçamentos para Representantes FixDoor</h1>
   <p>Portas Seccionais e Portais de Selamento</p>
 </header>
 
@@ -26,61 +26,97 @@
   <p class="representante-atual">Representante: <strong id="nome-representante"></strong></p>
   <input type="hidden" id="representante" name="representante">
 
-  <label for="tipo">Tipo de solicitação</label>
-  <select id="tipo" name="tipo">
-    <option value="seccional">Porta Seccional | Nova</option>
-    <option value="portal">Portal de Selamento</option>
-  </select>
+  <label>Equipamento</label>
+  <div class="toggle-group" id="equipamento-toggle">
+    <button type="button" class="toggle-btn" data-value="Porta Seccional">Porta Seccional</button>
+    <button type="button" class="toggle-btn" data-value="Portal de Selamento">Portal de Selamento</button>
+  </div>
+  <input type="hidden" id="equipamento" name="equipamento">
+  <p id="equipamento-erro" class="erro" hidden>Escolha um equipamento antes de continuar.</p>
 
   <fieldset>
     <legend>Dados do cliente</legend>
 
-    <label for="nome_solicitante">Nome do solicitante</label>
-    <input type="text" id="nome_solicitante" name="nome_solicitante" required>
+    <label for="nome_cliente">Nome do cliente</label>
+    <input type="text" id="nome_cliente" name="nome_cliente" required>
+
+    <label for="cnpj_cliente">CNPJ do cliente</label>
+    <input type="text" id="cnpj_cliente" name="cnpj_cliente" inputmode="numeric"
+           placeholder="00.000.000/0000-00" maxlength="18"
+           pattern="\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}"
+           title="Digite os 14 números do CNPJ" required>
 
     <label for="email_cliente">E-mail do cliente</label>
     <input type="email" id="email_cliente" name="email_cliente" required>
 
     <label for="telefone_cliente">Telefone do cliente</label>
-    <input type="tel" id="telefone_cliente" name="telefone_cliente">
-
-    <label for="cnpj_cliente">CNPJ do cliente</label>
-    <input type="text" id="cnpj_cliente" name="cnpj_cliente">
-
-    <label for="cidade">Cidade</label>
-    <input type="text" id="cidade" name="cidade">
+    <input type="text" id="telefone_cliente" name="telefone_cliente" inputmode="numeric"
+           placeholder="(00) 00000-0000" maxlength="16"
+           pattern="\(\d{2}\) \d{4,5}-\d{4}"
+           title="Digite um telefone válido com DDD" required>
 
     <label for="estado">Estado</label>
-    <input type="text" id="estado" name="estado" maxlength="2" placeholder="UF">
-
-    <label for="frete">Frete?</label>
-    <select id="frete" name="frete">
-      <option value="sim">Sim</option>
-      <option value="nao">Não</option>
+    <select id="estado" name="estado" required>
+      <option value="" selected disabled>Carregando estados...</option>
     </select>
 
-    <label for="mao_de_obra">Mão de obra?</label>
-    <select id="mao_de_obra" name="mao_de_obra">
-      <option value="sim">Sim</option>
-      <option value="nao">Não</option>
+    <label for="cidade">Cidade</label>
+    <select id="cidade" name="cidade" required disabled>
+      <option value="" selected disabled>Selecione o estado primeiro</option>
     </select>
   </fieldset>
 
-  <!-- Campos técnicos: aparecem quando "Tipo" = Porta Seccional -->
-  <fieldset id="campos-seccional">
-    <legend>Especificações técnicas</legend>
+  <fieldset>
+    <legend>Frete</legend>
+    <label for="frete">Frete</label>
+    <select id="frete" name="frete" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="CIF">CIF</option>
+      <option value="FOB">FOB</option>
+      <option value="FOB com indicação">FOB com indicação</option>
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Instalação</legend>
+    <label for="instalacao">Instalação</label>
+    <select id="instalacao" name="instalacao" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Não">Não</option>
+      <option value="Pelo representante">Pelo representante</option>
+      <option value="Pela MaxDock">Pela MaxDock</option>
+    </select>
+
+    <div id="campo-valor-instalacao" hidden>
+      <label for="valor_instalacao">Valor da instalação por equipamento</label>
+      <input type="text" id="valor_instalacao" name="valor_instalacao" inputmode="numeric" placeholder="R$ 0,00">
+    </div>
+  </fieldset>
+
+  <!-- Especificações técnicas: aparecem conforme o Equipamento escolhido -->
+  <fieldset id="campos-seccional" hidden disabled>
+    <legend>Especificações técnicas — Porta Seccional</legend>
+
+    <label for="rebatimento">Rebatimento</label>
+    <select id="rebatimento" name="rebatimento" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="VL">VL</option>
+      <option value="HL">HL</option>
+      <option value="HL TD">HL TD</option>
+      <option value="SL">SL</option>
+    </select>
 
     <label for="quantidade_portas">Quantidade de portas</label>
-    <input type="number" id="quantidade_portas" name="quantidade_portas" min="1">
+    <input type="number" id="quantidade_portas" name="quantidade_portas" min="1" data-max-digitos="4" required>
 
-    <label for="largura_vao">Largura do vão (mm)</label>
-    <input type="number" id="largura_vao" name="largura_vao">
+    <label for="largura_vao_seccional">Largura do vão (mm)</label>
+    <input type="number" id="largura_vao_seccional" name="largura_vao" data-max-digitos="5" required>
 
-    <label for="altura_vao">Altura do vão (mm)</label>
-    <input type="number" id="altura_vao" name="altura_vao">
+    <label for="altura_vao_seccional">Altura do vão (mm)</label>
+    <input type="number" id="altura_vao_seccional" name="altura_vao" data-max-digitos="5" required>
 
-    <label for="pe_direito">Pé direito (mm)</label>
-    <input type="number" id="pe_direito" name="pe_direito">
+    <label for="pe_direito_seccional">Pé direito (mm)</label>
+    <input type="number" id="pe_direito_seccional" name="pe_direito" data-max-digitos="5" required>
 
     <label for="tipo_acionamento">Tipo de acionamento</label>
     <select id="tipo_acionamento" name="tipo_acionamento">
@@ -92,35 +128,92 @@
     <label for="numero_visores">Número de visores</label>
     <select id="numero_visores" name="numero_visores">
       <option>0</option><option>1</option><option>2</option><option>3</option>
-      <option>5</option><option>6</option><option>7</option><option>8</option>
-      <option>9</option><option>10</option>
+      <option>4</option><option>5</option><option>6</option><option>7</option>
+      <option>8</option><option>9</option><option>10</option>
     </select>
 
-    <label for="rebatimento">Rebatimento</label>
-    <select id="rebatimento" name="rebatimento">
-      <option value="VL">VL</option>
-      <option value="HL">HL</option>
-      <option value="SL">SL</option>
-      <option value="LH">LH</option>
+    <label for="estrutura_coluna_seccional">Estrutura da coluna/parede</label>
+    <select id="estrutura_coluna_seccional" name="estrutura_coluna" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Isopainel">Isopainel</option>
+      <option value="Bloco grauteado">Bloco grauteado</option>
+      <option value="Bloco oco">Bloco oco</option>
+      <option value="Placa cimentícia">Placa cimentícia</option>
+      <option value="Metalon (tubo)">Metalon (tubo)</option>
+      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
+    </select>
+
+    <label for="estrutura_teto">Estrutura do teto</label>
+    <select id="estrutura_teto" name="estrutura_teto" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Isopainel">Isopainel</option>
+      <option value="Bloco grauteado">Bloco grauteado</option>
+      <option value="Bloco oco">Bloco oco</option>
+      <option value="Placa cimentícia">Placa cimentícia</option>
+      <option value="Metalon (tubo)">Metalon (tubo)</option>
+      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
+    </select>
+
+    <label for="acessorios_seccional">Acessórios</label>
+    <select id="acessorios_seccional" name="acessorios_dropdown">
+      <option value="">Nenhum</option>
+      <option value="Sensor de tráfego">Sensor de tráfego</option>
+      <option value="Sensor Pressostato">Sensor Pressostato</option>
     </select>
 
     <label>Acessórios estruturais</label>
     <label class="checkbox"><input type="checkbox" name="acessorios" value="estrutura_metalica"> Estrutura metálica</label>
     <label class="checkbox"><input type="checkbox" name="acessorios" value="mao_francesa"> Mão francesa</label>
 
-    <label for="estrutura_coluna">Estrutura da coluna/parede</label>
-    <select id="estrutura_coluna" name="estrutura_coluna">
-      <option value="isopainel">Isopainel</option>
-      <option value="bloco_grauteado">Bloco grauteado</option>
-      <option value="bloco_oco">Bloco oco</option>
-      <option value="placa_cimenticia">Placa cimentícia</option>
-      <option value="metalon">Metalon (tubo)</option>
-      <option value="metalica_perfil_aberto">Metálica - Perfil Aberto</option>
-    </select>
+    <label for="observacoes_seccional">Observações</label>
+    <textarea id="observacoes_seccional" name="observacoes" rows="4"></textarea>
   </fieldset>
 
-  <label for="observacoes">Itens extra e observações</label>
-  <textarea id="observacoes" name="observacoes" rows="4"></textarea>
+  <fieldset id="campos-portal" hidden disabled>
+    <legend>Especificações técnicas — Portal de Selamento</legend>
+
+    <label for="quantidade_portais">Quantidade de portais</label>
+    <input type="number" id="quantidade_portais" name="quantidade_portais" min="1" data-max-digitos="4" required>
+
+    <label for="largura_vao_portal">Largura do vão (mm)</label>
+    <input type="number" id="largura_vao_portal" name="largura_vao" data-max-digitos="4" required>
+
+    <label for="altura_vao_portal">Altura do vão (mm)</label>
+    <input type="number" id="altura_vao_portal" name="altura_vao" data-max-digitos="4" required>
+
+    <label for="pe_direito_portal">Pé direito (mm)</label>
+    <input type="number" id="pe_direito_portal" name="pe_direito" data-max-digitos="4" required>
+
+    <label for="modelo_portal">Modelo do portal</label>
+    <select id="modelo_portal" name="modelo_portal" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="F1">F1</option>
+      <option value="F2 - padrão">F2 - padrão</option>
+      <option value="F3">F3</option>
+      <option value="Especial">Especial</option>
+    </select>
+
+    <label for="acessorios_portal">Acessórios</label>
+    <select id="acessorios_portal" name="acessorios_dropdown" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Bolsão triangular">Bolsão triangular</option>
+      <option value="Estrutura metálica">Estrutura metálica</option>
+    </select>
+
+    <label for="estrutura_coluna_portal">Estrutura da coluna/parede</label>
+    <select id="estrutura_coluna_portal" name="estrutura_coluna" required>
+      <option value="" selected disabled>Selecione...</option>
+      <option value="Isopainel">Isopainel</option>
+      <option value="Bloco grauteado">Bloco grauteado</option>
+      <option value="Bloco oco">Bloco oco</option>
+      <option value="Placa cimentícia">Placa cimentícia</option>
+      <option value="Metalon (tubo)">Metalon (tubo)</option>
+      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
+    </select>
+
+    <label for="observacoes_portal">Observações</label>
+    <textarea id="observacoes_portal" name="observacoes" rows="4"></textarea>
+  </fieldset>
 
   <label for="anexos">Fotos e vídeos</label>
   <input type="file" id="anexos" name="anexos" multiple accept="image/*,video/*">
@@ -128,6 +221,7 @@
 
   <button type="submit" id="btn-enviar">Enviar solicitação<span class="spinner" hidden></span></button>
   <p id="form-status" hidden></p>
+  <button type="button" id="btn-nova-solicitacao" class="btn-secundario" hidden>Nova solicitação</button>
 </form>
 
 <script src="js/app.js"></script>

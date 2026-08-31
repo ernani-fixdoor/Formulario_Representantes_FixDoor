@@ -114,20 +114,44 @@ tempo indeterminado — não existe rotina nenhuma apagando pastas antigas.
   enviar e-mail). A cota diária de `UrlFetchApp` (20.000/dia em conta Google
   consumer) cobre esse volume com folga, mas vale monitorar se o volume crescer muito.
 
-## Campos do formulário (migrados do Framer)
+## Campos do formulário
 
-- Tipo de solicitação: "Porta Seccional | Nova" ou "Portal de Selamento" — controla
-  quais campos aparecem, do mesmo jeito que o Framer fazia com código customizado.
+- **Equipamento**: dois botões lado a lado ("Porta Seccional" / "Portal de Selamento"),
+  não um dropdown — nenhum vem selecionado por padrão, o representante precisa
+  escolher (validado manualmente em `js/app.js`, já que `<input type="hidden">` não
+  participa da validação nativa do HTML). Essa escolha controla quais campos de
+  "Especificações técnicas" aparecem.
 - **Removido**: o campo "Vendedor" antigo (misturava vendedor interno + parceiro, ex.
   "Tom | Fransisco") não existe mais. Foi substituído pelo campo "Representante",
   travado, vindo do portão de senha.
-- Campos comuns: Nome do solicitante, E-mail do cliente, Telefone do cliente, CNPJ do
-  cliente, Cidade, Estado, Frete (Sim/Não), Mão de obra (Sim/Não), Quantidade de portas,
-  Largura do vão (mm), Altura do vão (mm), Pé direito (mm), Tipo de acionamento
-  (Manual/Motorizada/Talha), Número de visores (0–10), Rebatimento (VL/HL/SL/LH),
-  Acessórios estruturais (Estrutura metálica, Mão francesa — múltipla escolha),
-  Estrutura da coluna/parede (dropdown), Itens extra e observações (texto livre).
+- **Dados do cliente** (todos obrigatórios): Nome do cliente, CNPJ do cliente
+  (máscara automática, 14 dígitos), E-mail do cliente, Telefone do cliente (máscara
+  automática, bloqueia envio se o formato não fechar), Estado, Cidade (dropdowns em
+  cascata, carregados da API pública do IBGE em tempo real —
+  `servicodados.ibge.gov.br`, sem lista de cidades embutida no código).
+- **Frete** (seção própria): CIF / FOB / FOB com indicação.
+- **Instalação** (seção própria): Não / Pelo representante / Pela MaxDock — ao
+  escolher "Pelo representante", aparece o campo "Valor da instalação por
+  equipamento" (máscara de Real automática).
+- **Especificações técnicas — Porta Seccional**: Rebatimento (VL/HL/HL TD/SL),
+  Quantidade de portas (até 4 dígitos), Largura/Altura do vão e Pé direito em mm
+  (até 5 dígitos), Tipo de acionamento (Manual/Motorizada/Talha), Número de visores
+  (0–10), Estrutura da coluna/parede (dropdown), Estrutura do teto (mesmas opções da
+  coluna/parede), Acessórios (dropdown: Sensor de tráfego / Sensor Pressostato — não
+  confundir com o grupo de checkboxes "Acessórios estruturais": Estrutura metálica,
+  Mão francesa), Observações.
+- **Especificações técnicas — Portal de Selamento**: Quantidade de portais,
+  Largura/Altura do vão e Pé direito em mm (todos até 4 dígitos, com stepper —
+  `type="number"`), Modelo do portal (F1/F2 - padrão/F3/Especial), Acessórios
+  (dropdown: Bolsão triangular / Estrutura metálica — dropdown próprio, diferente do
+  da Porta Seccional), Estrutura da coluna/parede e Observações (campos equivalentes
+  aos da Porta Seccional, cada tipo tem seu próprio elemento no HTML mas usam o mesmo
+  `name`, então só o do tipo ativo é enviado — o outro fica dentro de um `<fieldset
+  disabled>`).
 - Upload de fotos e vídeos (múltiplos arquivos).
+- Depois de um envio com sucesso, o formulário fica bloqueado (todos os campos
+  desabilitados) e aparece um botão "Nova solicitação" que reseta tudo (inclusive
+  o dropdown de Cidade e a escolha de Equipamento) para um novo envio.
 - **Não existe** (e não deve existir) nenhum campo de escolha de destinatário — ver
   "Regra importante sobre o roteamento de e-mail" acima.
 

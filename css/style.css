@@ -103,6 +103,35 @@ button {
 
 button:disabled { opacity: 0.6; cursor: default; }
 
+fieldset:disabled { opacity: 0.5; }
+
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.toggle-btn {
+  flex: 1;
+  width: auto;
+  margin-top: 0;
+  background: var(--cartao);
+  color: var(--tinta);
+  border: 1px solid var(--linha);
+}
+
+.toggle-btn.ativo {
+  background: var(--acento);
+  color: #fff;
+  border-color: var(--acento);
+}
+
+.btn-secundario {
+  background: transparent;
+  color: var(--acento);
+  border: 1px solid var(--acento);
+}
+
 .spinner {
   width: 1em;
   height: 1em;
