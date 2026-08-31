@@ -17,7 +17,7 @@
 <section id="gate" class="cartao">
   <label for="senha">Senha do representante</label>
   <input type="password" id="senha" autocomplete="off" placeholder="Digite sua senha">
-  <button id="btn-entrar" type="button">Entrar</button>
+  <button id="btn-entrar" type="button">Entrar<span class="spinner" hidden></span></button>
   <p id="gate-erro" class="erro" hidden>Senha incorreta. Tente de novo.</p>
 </section>
 
@@ -126,7 +126,7 @@
   <input type="file" id="anexos" name="anexos" multiple accept="image/*,video/*">
   <p class="dica">Pode selecionar mais de um arquivo.</p>
 
-  <button type="submit">Enviar solicitação</button>
+  <button type="submit" id="btn-enviar">Enviar solicitação<span class="spinner" hidden></span></button>
   <p id="form-status" hidden></p>
 </form>
 

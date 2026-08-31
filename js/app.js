@@ -5,12 +5,15 @@ const gate = document.getElementById('gate');
 const form = document.getElementById('formulario');
 const senhaInput = document.getElementById('senha');
 const btnEntrar = document.getElementById('btn-entrar');
+const spinnerEntrar = btnEntrar.querySelector('.spinner');
 const gateErro = document.getElementById('gate-erro');
 const nomeRepresentanteEl = document.getElementById('nome-representante');
 const representanteInput = document.getElementById('representante');
 const tipoSelect = document.getElementById('tipo');
 const camposSeccional = document.getElementById('campos-seccional');
 const statusEl = document.getElementById('form-status');
+const btnEnviar = document.getElementById('btn-enviar');
+const spinnerEnviar = btnEnviar.querySelector('.spinner');
 
 // Mantém a sessão enquanto a aba estiver aberta (some ao fechar o navegador)
 const repSalvo = sessionStorage.getItem('representante');
@@ -27,6 +30,7 @@ async function validarSenha() {
   if (!senha) return;
 
   btnEntrar.disabled = true;
+  spinnerEntrar.hidden = false;
   try {
     const resposta = await chamarBackend('validarSenha', { senha });
     if (resposta.ok) {
@@ -41,6 +45,7 @@ async function validarSenha() {
     gateErro.hidden = false;
   } finally {
     btnEntrar.disabled = false;
+    spinnerEntrar.hidden = true;
   }
 }
 
@@ -59,6 +64,8 @@ form.addEventListener('submit', async (ev) => {
   ev.preventDefault();
   statusEl.hidden = false;
   statusEl.textContent = 'Enviando...';
+  btnEnviar.disabled = true;
+  spinnerEnviar.hidden = false;
 
   const dados = Object.fromEntries(new FormData(form).entries());
   const arquivos = document.getElementById('anexos').files;
@@ -75,6 +82,9 @@ form.addEventListener('submit', async (ev) => {
     }
   } catch (erro) {
     statusEl.textContent = 'Erro ao enviar. Tente de novo.';
+  } finally {
+    btnEnviar.disabled = false;
+    spinnerEnviar.hidden = true;
   }
 });
 

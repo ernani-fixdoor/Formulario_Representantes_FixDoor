@@ -103,6 +103,22 @@ button {
 
 button:disabled { opacity: 0.6; cursor: default; }
 
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5rem;
+  vertical-align: -0.15em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
 .representante-atual {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
