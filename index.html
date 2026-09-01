@@ -29,14 +29,6 @@
   <p class="representante-atual">Representante: <strong id="nome-representante"></strong></p>
   <input type="hidden" id="representante" name="representante">
 
-  <label>Equipamento</label>
-  <div class="toggle-group" id="equipamento-toggle">
-    <button type="button" class="toggle-btn" data-value="Porta Seccional">Porta Seccional</button>
-    <button type="button" class="toggle-btn" data-value="Portal de Selamento">Portal de Selamento</button>
-  </div>
-  <input type="hidden" id="equipamento" name="equipamento">
-  <p id="equipamento-erro" class="erro" hidden>Escolha um equipamento antes de continuar.</p>
-
   <fieldset>
     <legend>Dados do cliente</legend>
 
@@ -102,7 +94,7 @@
       <option value="" selected disabled>Selecione...</option>
       <option value="Não">Não</option>
       <option value="Pelo representante">Pelo representante</option>
-      <option value="Pela MaxDock">Pela MaxDock</option>
+      <option value="Por equipe credenciada pela FixDoor">Por equipe credenciada pela FixDoor</option>
     </select>
 
     <div id="campo-valor-instalacao" hidden>
@@ -111,125 +103,15 @@
     </div>
   </fieldset>
 
-  <!-- Especificações técnicas: aparecem conforme o Equipamento escolhido -->
-  <fieldset id="campos-seccional" hidden disabled>
-    <legend>Especificações técnicas — Porta Seccional</legend>
+  <!-- Um ou mais equipamentos (Porta Seccional / Portal de Selamento) no mesmo orçamento.
+       Os blocos de item são gerados dinamicamente pelo js/app.js (criarBlocoItem). -->
+  <div id="itens-equipamento"></div>
+  <button type="button" id="btn-add-item" class="btn-secundario">+ Adicionar outro equipamento</button>
 
-    <label for="rebatimento">Rebatimento</label>
-    <select id="rebatimento" name="rebatimento" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="VL">VL</option>
-      <option value="HL">HL</option>
-      <option value="HL TD">HL TD</option>
-      <option value="SL">SL</option>
-    </select>
-
-    <label for="quantidade_portas">Quantidade de portas</label>
-    <input type="number" id="quantidade_portas" name="quantidade_portas" min="1" data-max-digitos="4" required>
-
-    <label for="largura_vao_seccional">Largura do vão (mm)</label>
-    <input type="number" id="largura_vao_seccional" name="largura_vao" data-max-digitos="5" required>
-
-    <label for="altura_vao_seccional">Altura do vão (mm)</label>
-    <input type="number" id="altura_vao_seccional" name="altura_vao" data-max-digitos="5" required>
-
-    <label for="pe_direito_seccional">Pé direito (mm)</label>
-    <input type="number" id="pe_direito_seccional" name="pe_direito" data-max-digitos="5" required>
-
-    <label for="tipo_acionamento">Tipo de acionamento</label>
-    <select id="tipo_acionamento" name="tipo_acionamento">
-      <option value="manual">Manual</option>
-      <option value="motorizada">Motorizada</option>
-      <option value="talha">Talha</option>
-    </select>
-
-    <label for="numero_visores">Número de visores</label>
-    <select id="numero_visores" name="numero_visores">
-      <option>0</option><option>1</option><option>2</option><option>3</option>
-      <option>4</option><option>5</option><option>6</option><option>7</option>
-      <option>8</option><option>9</option><option>10</option>
-    </select>
-
-    <label for="estrutura_coluna_seccional">Estrutura da coluna/parede</label>
-    <select id="estrutura_coluna_seccional" name="estrutura_coluna" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="Isopainel">Isopainel</option>
-      <option value="Bloco grauteado">Bloco grauteado</option>
-      <option value="Bloco oco">Bloco oco</option>
-      <option value="Placa cimentícia">Placa cimentícia</option>
-      <option value="Metalon (tubo)">Metalon (tubo)</option>
-      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
-    </select>
-
-    <label for="estrutura_teto">Estrutura do teto</label>
-    <select id="estrutura_teto" name="estrutura_teto" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="Isopainel">Isopainel</option>
-      <option value="Bloco grauteado">Bloco grauteado</option>
-      <option value="Bloco oco">Bloco oco</option>
-      <option value="Placa cimentícia">Placa cimentícia</option>
-      <option value="Metalon (tubo)">Metalon (tubo)</option>
-      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
-    </select>
-
-    <label>Acessórios</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="Sensor de tráfego"> Sensor de tráfego</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="Sensor Pressostato"> Sensor Pressostato</label>
-
-    <label>Acessórios estruturais</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios_estruturais" value="Estrutura metálica"> Estrutura metálica</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios_estruturais" value="Mão francesa"> Mão francesa</label>
-
-    <label for="observacoes_seccional">Observações</label>
-    <textarea id="observacoes_seccional" name="observacoes" rows="4"></textarea>
-  </fieldset>
-
-  <fieldset id="campos-portal" hidden disabled>
-    <legend>Especificações técnicas — Portal de Selamento</legend>
-
-    <label for="quantidade_portais">Quantidade de portais</label>
-    <input type="number" id="quantidade_portais" name="quantidade_portais" min="1" data-max-digitos="4" required>
-
-    <label for="largura_vao_portal">Largura do vão (mm)</label>
-    <input type="number" id="largura_vao_portal" name="largura_vao" data-max-digitos="4" required>
-
-    <label for="altura_vao_portal">Altura do vão (mm)</label>
-    <input type="number" id="altura_vao_portal" name="altura_vao" data-max-digitos="4" required>
-
-    <label for="pe_direito_portal">Pé direito (mm)</label>
-    <input type="number" id="pe_direito_portal" name="pe_direito" data-max-digitos="4" required>
-
-    <label for="modelo_portal">Modelo do portal</label>
-    <select id="modelo_portal" name="modelo_portal" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="F1">F1</option>
-      <option value="F2 - padrão">F2 - padrão</option>
-      <option value="F3">F3</option>
-      <option value="Especial">Especial</option>
-    </select>
-
-    <label>Acessórios</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="Bolsão triangular"> Bolsão triangular</label>
-    <label class="checkbox"><input type="checkbox" name="acessorios" value="Estrutura metálica"> Estrutura metálica</label>
-
-    <label for="estrutura_coluna_portal">Estrutura da coluna/parede</label>
-    <select id="estrutura_coluna_portal" name="estrutura_coluna" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="Isopainel">Isopainel</option>
-      <option value="Bloco grauteado">Bloco grauteado</option>
-      <option value="Bloco oco">Bloco oco</option>
-      <option value="Placa cimentícia">Placa cimentícia</option>
-      <option value="Metalon (tubo)">Metalon (tubo)</option>
-      <option value="Metálica - Perfil Aberto">Metálica - Perfil Aberto</option>
-    </select>
-
-    <label for="observacoes_portal">Observações</label>
-    <textarea id="observacoes_portal" name="observacoes" rows="4"></textarea>
-  </fieldset>
-
-  <label for="anexos">Fotos e vídeos</label>
-  <input type="file" id="anexos" name="anexos" multiple accept="image/*,video/*">
-  <p class="dica">Pode selecionar mais de um arquivo.</p>
+  <label for="anexos">Anexos</label>
+  <input type="file" id="anexos" multiple accept="image/*,video/*">
+  <ul id="lista-anexos" class="lista-anexos"></ul>
+  <p class="dica">Pode selecionar mais de um arquivo, de uma vez ou aos poucos.</p>
 
   <button type="submit" id="btn-enviar">Enviar solicitação<span class="spinner" hidden></span></button>
   <p id="form-status" hidden></p>

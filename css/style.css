@@ -197,6 +197,78 @@ fieldset:disabled { opacity: 0.5; }
   font-size: 0.9rem;
 }
 
+.item-equipamento {
+  margin-top: 1.5rem;
+  padding: 1rem 1rem 1.25rem;
+  background: var(--fundo);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+}
+
+.item-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.item-titulo {
+  color: var(--acento-escuro);
+}
+
+.btn-remover-item {
+  margin: 0;
+  width: auto;
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  color: var(--tinta-suave);
+  border: 1px solid var(--linha);
+  font-size: 0.85rem;
+}
+
+.btn-remover-item:hover:not(:disabled) {
+  color: var(--erro);
+  border-color: var(--erro);
+}
+
+.lista-anexos {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.lista-anexos li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.4rem;
+  background: var(--fundo);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.btn-remover-anexo {
+  margin: 0;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  background: transparent;
+  color: var(--tinta-suave);
+  border: 1px solid var(--linha);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.btn-remover-anexo:hover:not(:disabled) {
+  color: var(--erro);
+  border-color: var(--erro);
+}
+
 #form-status {
   margin-top: 1rem;
   font-size: 0.9rem;

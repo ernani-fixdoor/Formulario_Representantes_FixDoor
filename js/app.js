@@ -13,32 +13,239 @@ const statusEl = document.getElementById('form-status');
 const btnEnviar = document.getElementById('btn-enviar');
 const spinnerEnviar = btnEnviar.querySelector('.spinner');
 const btnNovaSolicitacao = document.getElementById('btn-nova-solicitacao');
-const anexosInput = document.getElementById('anexos');
 
-// ===== Equipamento (Porta Seccional / Portal de Selamento) =====
+// ===== Itens do orçamento (um ou mais equipamentos: Porta Seccional / Portal de Selamento) =====
 
-const equipamentoInput = document.getElementById('equipamento');
-const equipamentoErro = document.getElementById('equipamento-erro');
-const botoesEquipamento = [...document.querySelectorAll('#equipamento-toggle .toggle-btn')];
-const camposSeccional = document.getElementById('campos-seccional');
-const camposPortal = document.getElementById('campos-portal');
+const itensContainer = document.getElementById('itens-equipamento');
+const btnAddItem = document.getElementById('btn-add-item');
+let contadorItens = 0;
 
-function selecionarEquipamento(valor) {
-  equipamentoInput.value = valor;
-  equipamentoErro.hidden = true;
-  botoesEquipamento.forEach((btn) => btn.classList.toggle('ativo', btn.dataset.value === valor));
+const OPCOES_ESTRUTURA = [
+  'Isopainel', 'Bloco grauteado', 'Bloco oco',
+  'Placa cimentícia', 'Metalon (tubo)', 'Metálica - Perfil Aberto'
+];
 
-  const ehSeccional = valor === 'Porta Seccional';
-  const ehPortal = valor === 'Portal de Selamento';
-  camposSeccional.hidden = !ehSeccional;
-  camposSeccional.disabled = !ehSeccional;
-  camposPortal.hidden = !ehPortal;
-  camposPortal.disabled = !ehPortal;
+function opcoesHtml(valores, comPlaceholder) {
+  const placeholder = comPlaceholder ? '<option value="" selected disabled>Selecione...</option>' : '';
+  return placeholder + valores.map((v) => '<option value="' + v + '">' + v + '</option>').join('');
 }
 
-botoesEquipamento.forEach((btn) => {
-  btn.addEventListener('click', () => selecionarEquipamento(btn.dataset.value));
-});
+function criarBlocoItem() {
+  contadorItens += 1;
+
+  const bloco = document.createElement('div');
+  bloco.className = 'item-equipamento';
+  bloco.innerHTML =
+    '<div class="item-cabecalho">' +
+      '<strong class="item-titulo">Equipamento ' + contadorItens + '</strong>' +
+      '<button type="button" class="btn-remover-item" title="Remover este equipamento">✕</button>' +
+    '</div>' +
+
+    '<label>Nome deste item (opcional)</label>' +
+    '<input type="text" data-field="nome_item" placeholder="Ex: Porta 1 - Depósito">' +
+
+    '<label>Equipamento</label>' +
+    '<div class="toggle-group item-equipamento-toggle">' +
+      '<button type="button" class="toggle-btn" data-value="Porta Seccional">Porta Seccional</button>' +
+      '<button type="button" class="toggle-btn" data-value="Portal de Selamento">Portal de Selamento</button>' +
+    '</div>' +
+    '<p class="erro item-erro" hidden></p>' +
+
+    '<fieldset class="campos-seccional-item" hidden disabled>' +
+      '<legend>Especificações técnicas — Porta Seccional</legend>' +
+
+      '<label>Rebatimento</label>' +
+      '<select data-field="rebatimento" required>' +
+        opcoesHtml(['VL', 'HL', 'HL TD', 'SL'], true) +
+      '</select>' +
+
+      '<label>Quantidade de portas</label>' +
+      '<input type="number" data-field="quantidade_portas" min="1" data-max-digitos="4" required>' +
+
+      '<label>Largura do vão (mm)</label>' +
+      '<input type="number" data-field="largura_vao" data-max-digitos="5" required>' +
+
+      '<label>Altura do vão (mm)</label>' +
+      '<input type="number" data-field="altura_vao" data-max-digitos="5" required>' +
+
+      '<label>Pé direito (mm)</label>' +
+      '<input type="number" data-field="pe_direito" data-max-digitos="5" required>' +
+
+      '<label>Tipo de acionamento</label>' +
+      '<select data-field="tipo_acionamento">' +
+        '<option value="Manual">Manual</option>' +
+        '<option value="Motorizada">Motorizada</option>' +
+        '<option value="Talha">Talha</option>' +
+      '</select>' +
+
+      '<label>Número de visores</label>' +
+      '<select data-field="numero_visores">' +
+        [0,1,2,3,4,5,6,7,8,9,10].map((n) => '<option>' + n + '</option>').join('') +
+      '</select>' +
+
+      '<label>Estrutura da coluna/parede</label>' +
+      '<select data-field="estrutura_coluna" required>' + opcoesHtml(OPCOES_ESTRUTURA, true) + '</select>' +
+
+      '<label>Estrutura do teto</label>' +
+      '<select data-field="estrutura_teto" required>' + opcoesHtml(OPCOES_ESTRUTURA, true) + '</select>' +
+
+      '<label>Acessórios</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios" value="Sensor de tráfego"> Sensor de tráfego</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios" value="Sensor Pressostato"> Sensor Pressostato</label>' +
+
+      '<label>Acessórios estruturais</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios_estruturais" value="Estrutura metálica"> Estrutura metálica</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios_estruturais" value="Mão francesa"> Mão francesa</label>' +
+
+      '<label>Observações</label>' +
+      '<textarea data-field="observacoes" rows="4"></textarea>' +
+    '</fieldset>' +
+
+    '<fieldset class="campos-portal-item" hidden disabled>' +
+      '<legend>Especificações técnicas — Portal de Selamento</legend>' +
+
+      '<label>Quantidade de portais</label>' +
+      '<input type="number" data-field="quantidade_portais" min="1" data-max-digitos="4" required>' +
+
+      '<label>Largura do vão (mm)</label>' +
+      '<input type="number" data-field="largura_vao" data-max-digitos="5" required>' +
+
+      '<label>Altura do vão (mm)</label>' +
+      '<input type="number" data-field="altura_vao" data-max-digitos="5" required>' +
+
+      '<label>Pé direito (mm)</label>' +
+      '<input type="number" data-field="pe_direito" data-max-digitos="5" required>' +
+
+      '<label>Modelo do portal</label>' +
+      '<select data-field="modelo_portal" required>' + opcoesHtml(['F1', 'F2 - padrão', 'F3', 'Especial'], true) + '</select>' +
+
+      '<label>Acessórios</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios" value="Bolsão triangular"> Bolsão triangular</label>' +
+      '<label class="checkbox"><input type="checkbox" data-field="acessorios" value="Estrutura metálica"> Estrutura metálica</label>' +
+
+      '<label>Estrutura da coluna/parede</label>' +
+      '<select data-field="estrutura_coluna" required>' + opcoesHtml(OPCOES_ESTRUTURA, true) + '</select>' +
+
+      '<label>Observações</label>' +
+      '<textarea data-field="observacoes" rows="4"></textarea>' +
+    '</fieldset>';
+
+  wireBlocoItem(bloco);
+  return bloco;
+}
+
+function wireBlocoItem(bloco) {
+  const camposSeccional = bloco.querySelector('.campos-seccional-item');
+  const camposPortal = bloco.querySelector('.campos-portal-item');
+  const itemErro = bloco.querySelector('.item-erro');
+
+  bloco.querySelectorAll('.item-equipamento-toggle .toggle-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const valor = btn.dataset.value;
+      itemErro.hidden = true;
+      bloco.dataset.equipamento = valor;
+      bloco.querySelectorAll('.item-equipamento-toggle .toggle-btn').forEach((b) => {
+        b.classList.toggle('ativo', b === btn);
+      });
+      const ehSeccional = valor === 'Porta Seccional';
+      const ehPortal = valor === 'Portal de Selamento';
+      camposSeccional.hidden = !ehSeccional;
+      camposSeccional.disabled = !ehSeccional;
+      camposPortal.hidden = !ehPortal;
+      camposPortal.disabled = !ehPortal;
+    });
+  });
+
+  bloco.querySelectorAll('[data-max-digitos]').forEach((input) => {
+    const max = Number(input.dataset.maxDigitos);
+    input.addEventListener('input', () => {
+      if (input.value.length > max) input.value = input.value.slice(0, max);
+    });
+  });
+
+  bloco.querySelector('.btn-remover-item').addEventListener('click', () => {
+    bloco.remove();
+    renumerarItens();
+  });
+}
+
+function renumerarItens() {
+  [...itensContainer.querySelectorAll('.item-equipamento')].forEach((bloco, indice) => {
+    bloco.querySelector('.item-titulo').textContent = 'Equipamento ' + (indice + 1);
+  });
+}
+
+function adicionarItem() {
+  itensContainer.appendChild(criarBlocoItem());
+}
+
+function resetarItens() {
+  itensContainer.innerHTML = '';
+  contadorItens = 0;
+  adicionarItem();
+}
+
+btnAddItem.addEventListener('click', adicionarItem);
+adicionarItem();
+
+// Lê os campos de um bloco de item e devolve um objeto simples pra mandar no e-mail.
+function lerCamposDoItem(bloco) {
+  const equipamento = bloco.dataset.equipamento || '';
+  const ativo = equipamento === 'Portal de Selamento' ? bloco.querySelector('.campos-portal-item') : bloco.querySelector('.campos-seccional-item');
+  const campos = { equipamento: equipamento };
+
+  const nomeItem = bloco.querySelector('[data-field="nome_item"]').value.trim();
+  if (nomeItem) campos.nome_item = nomeItem;
+
+  if (!ativo) return campos;
+
+  ativo.querySelectorAll('[data-field]').forEach((el) => {
+    if (el.type === 'checkbox') return;
+    campos[el.dataset.field] = el.value;
+  });
+
+  ['acessorios', 'acessorios_estruturais'].forEach((grupo) => {
+    const valores = [...ativo.querySelectorAll('input[data-field="' + grupo + '"]:checked')].map((el) => el.value);
+    if (valores.length) campos[grupo] = valores.join(', ');
+  });
+
+  return campos;
+}
+
+// Valida todos os blocos de item; devolve os itens prontos ou null se algo estiver faltando.
+function validarEColetarItens() {
+  const blocos = [...itensContainer.querySelectorAll('.item-equipamento')];
+  let valido = true;
+
+  if (blocos.length === 0) valido = false;
+
+  const itens = blocos.map((bloco) => {
+    const itemErro = bloco.querySelector('.item-erro');
+    itemErro.hidden = true;
+
+    const equipamento = bloco.dataset.equipamento || '';
+    if (!equipamento) {
+      itemErro.textContent = 'Escolha um equipamento antes de continuar.';
+      itemErro.hidden = false;
+      valido = false;
+      return null;
+    }
+
+    if (equipamento === 'Portal de Selamento') {
+      const temAcessorio = bloco.querySelectorAll('.campos-portal-item input[data-field="acessorios"]:checked').length > 0;
+      if (!temAcessorio) {
+        itemErro.textContent = 'Escolha ao menos um acessório.';
+        itemErro.hidden = false;
+        valido = false;
+        return null;
+      }
+    }
+
+    return lerCamposDoItem(bloco);
+  });
+
+  return valido ? itens : null;
+}
 
 // ===== Estado / Cidade (API do IBGE) =====
 
@@ -123,14 +330,38 @@ instalacaoSelect.addEventListener('change', () => {
   if (!mostrar) valorInstalacaoInput.value = '';
 });
 
-// ===== Limita quantidade de dígitos em campos numéricos =====
+// ===== Anexos: escolhas múltiplas se acumulam numa lista, cada um removível =====
 
-document.querySelectorAll('[data-max-digitos]').forEach((input) => {
-  const max = Number(input.dataset.maxDigitos);
-  input.addEventListener('input', () => {
-    if (input.value.length > max) input.value = input.value.slice(0, max);
-  });
+const anexosInput = document.getElementById('anexos');
+const listaAnexosEl = document.getElementById('lista-anexos');
+let arquivosSelecionados = [];
+
+anexosInput.addEventListener('change', () => {
+  arquivosSelecionados.push(...anexosInput.files);
+  anexosInput.value = ''; // permite escolher o mesmo arquivo de novo e evita duplicar via input.files
+  renderizarListaAnexos();
 });
+
+function renderizarListaAnexos() {
+  listaAnexosEl.innerHTML = '';
+  arquivosSelecionados.forEach((arquivo, indice) => {
+    const li = document.createElement('li');
+    const nome = document.createElement('span');
+    nome.textContent = arquivo.name;
+    const btnRemover = document.createElement('button');
+    btnRemover.type = 'button';
+    btnRemover.className = 'btn-remover-anexo';
+    btnRemover.textContent = '✕';
+    btnRemover.title = 'Remover este arquivo';
+    btnRemover.addEventListener('click', () => {
+      arquivosSelecionados.splice(indice, 1);
+      renderizarListaAnexos();
+    });
+    li.appendChild(nome);
+    li.appendChild(btnRemover);
+    listaAnexosEl.appendChild(li);
+  });
+}
 
 // ===== Portão de senha =====
 // Sempre pede senha ao abrir a página — não persiste login entre carregamentos.
@@ -175,8 +406,10 @@ function mostrarFormulario(nomeRepresentante) {
 
 function finalizarComoEnviado() {
   form.querySelectorAll('fieldset').forEach((fs) => { fs.disabled = true; });
-  botoesEquipamento.forEach((btn) => { btn.disabled = true; });
+  form.querySelectorAll('.item-equipamento-toggle .toggle-btn, .btn-remover-item').forEach((btn) => { btn.disabled = true; });
+  btnAddItem.disabled = true;
   anexosInput.disabled = true;
+  listaAnexosEl.querySelectorAll('.btn-remover-anexo').forEach((btn) => { btn.disabled = true; });
   btnEnviar.hidden = true;
   btnNovaSolicitacao.hidden = false;
 }
@@ -184,9 +417,11 @@ function finalizarComoEnviado() {
 function iniciarNovaSolicitacao() {
   form.reset();
   form.querySelectorAll('fieldset').forEach((fs) => { fs.disabled = false; });
-  botoesEquipamento.forEach((btn) => { btn.disabled = false; });
+  btnAddItem.disabled = false;
   anexosInput.disabled = false;
-  selecionarEquipamento('');
+  resetarItens();
+  arquivosSelecionados = [];
+  renderizarListaAnexos();
   campoValorInstalacao.hidden = true;
   valorInstalacaoInput.required = false;
   cidadeSelect.innerHTML = '<option value="" selected disabled>Selecione o estado primeiro</option>';
@@ -202,10 +437,8 @@ btnNovaSolicitacao.addEventListener('click', iniciarNovaSolicitacao);
 form.addEventListener('submit', async (ev) => {
   ev.preventDefault();
 
-  if (!equipamentoInput.value) {
-    equipamentoErro.hidden = false;
-    return;
-  }
+  const itens = validarEColetarItens();
+  if (!itens) return;
 
   statusEl.hidden = false;
   statusEl.className = '';
@@ -214,10 +447,8 @@ form.addEventListener('submit', async (ev) => {
   spinnerEnviar.hidden = false;
 
   const dados = Object.fromEntries(new FormData(form).entries());
-  dados.acessorios = [...form.querySelectorAll('input[name="acessorios"]:checked')].map((el) => el.value).join(', ');
-  dados.acessorios_estruturais = [...form.querySelectorAll('input[name="acessorios_estruturais"]:checked')].map((el) => el.value).join(', ');
-  const arquivos = anexosInput.files;
-  dados.anexos = await Promise.all([...arquivos].map(paraBase64));
+  dados.itens = JSON.stringify(itens);
+  dados.anexos = await Promise.all(arquivosSelecionados.map(paraBase64));
 
   try {
     const resultado = await chamarBackend('enviarOrcamento', dados);

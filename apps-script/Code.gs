@@ -274,7 +274,6 @@ function enviarEmailGraph(emails, dados, linkPasta) {
 // Rótulo amigável de cada campo do formulário, pra não aparecer o nome interno
 // (ex.: "nome_cliente") cru no e-mail. Campo sem rótulo aqui usa o próprio nome.
 const RUTULOS_CAMPOS = {
-  equipamento: 'Equipamento',
   nome_cliente: 'Nome do cliente',
   cnpj_cliente: 'CNPJ do cliente',
   inscricao_estadual: 'Inscrição Estadual',
@@ -302,15 +301,17 @@ const RUTULOS_CAMPOS = {
   observacoes: 'Observações'
 };
 
-const CAMPOS_IGNORADOS_NO_EMAIL = ['anexos', 'representante', 'acao'];
+// Campos que não entram na tabela geral (o "itens" vira suas próprias tabelas,
+// um por equipamento).
+const CAMPOS_IGNORADOS_NO_EMAIL = ['anexos', 'representante', 'acao', 'itens'];
+// Dentro de cada item, "equipamento" e "nome_item" já aparecem no título da seção.
+const CAMPOS_IGNORADOS_NO_ITEM = ['equipamento', 'nome_item'];
 
-function montarCorpoEmail(dados, linkPasta) {
-  const enviadoEm = Utilities.formatDate(new Date(), 'America/Sao_Paulo', "dd/MM/yyyy 'às' HH:mm");
-
+function montarLinhasTabela(objeto, camposIgnorados) {
   let linhas = '';
-  Object.keys(dados).forEach(function (chave) {
-    if (CAMPOS_IGNORADOS_NO_EMAIL.indexOf(chave) !== -1) return;
-    const valor = dados[chave];
+  Object.keys(objeto).forEach(function (chave) {
+    if (camposIgnorados.indexOf(chave) !== -1) return;
+    const valor = objeto[chave];
     if (valor === undefined || valor === null || valor === '') return;
 
     const rotulo = RUTULOS_CAMPOS[chave] || chave;
@@ -323,14 +324,34 @@ function montarCorpoEmail(dados, linkPasta) {
       '<td style="padding:8px 12px;border:1px solid #ecdfd5;">' + valorSeguro + '</td>' +
       '</tr>';
   });
+  return linhas;
+}
 
-  return (
+function montarCorpoEmail(dados, linkPasta) {
+  const enviadoEm = Utilities.formatDate(new Date(), 'America/Sao_Paulo', "dd/MM/yyyy 'às' HH:mm");
+
+  let corpo =
     '<div style="font-family:Arial,Helvetica,sans-serif;color:#2b1d15;">' +
     '<p style="margin:0 0 16px;color:#8a7266;font-size:13px;">Enviado em ' + enviadoEm + '</p>' +
-    '<table style="border-collapse:collapse;width:100%;max-width:640px;">' + linhas + '</table>' +
+    '<table style="border-collapse:collapse;width:100%;max-width:640px;">' +
+    montarLinhasTabela(dados, CAMPOS_IGNORADOS_NO_EMAIL) +
+    '</table>';
+
+  const itens = dados.itens ? JSON.parse(dados.itens) : [];
+  itens.forEach(function (item, indice) {
+    const titulo = (item.nome_item ? item.nome_item + ' — ' : '') + (item.equipamento || ('Equipamento ' + (indice + 1)));
+    corpo +=
+      '<h3 style="color:#d1520a;margin:20px 0 6px;">' + escaparHtml(titulo) + '</h3>' +
+      '<table style="border-collapse:collapse;width:100%;max-width:640px;">' +
+      montarLinhasTabela(item, CAMPOS_IGNORADOS_NO_ITEM) +
+      '</table>';
+  });
+
+  corpo +=
     '<p style="margin-top:16px;"><strong>Fotos e vídeos:</strong> <a href="' + linkPasta + '">' + linkPasta + '</a></p>' +
-    '</div>'
-  );
+    '</div>';
+
+  return corpo;
 }
 
 function escaparHtml(texto) {
