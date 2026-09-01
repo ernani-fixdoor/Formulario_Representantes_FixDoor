@@ -87,22 +87,6 @@
     </select>
   </fieldset>
 
-  <fieldset>
-    <legend>Instalação</legend>
-    <label for="instalacao">Instalação</label>
-    <select id="instalacao" name="instalacao" required>
-      <option value="" selected disabled>Selecione...</option>
-      <option value="Não">Não</option>
-      <option value="Pelo representante">Pelo representante</option>
-      <option value="Por equipe credenciada pela FixDoor">Por equipe credenciada pela FixDoor</option>
-    </select>
-
-    <div id="campo-valor-instalacao" hidden>
-      <label for="valor_instalacao">Valor da instalação por equipamento</label>
-      <input type="text" id="valor_instalacao" name="valor_instalacao" inputmode="numeric" placeholder="R$ 0,00">
-    </div>
-  </fieldset>
-
   <!-- Um ou mais equipamentos (Porta Seccional / Portal de Selamento) no mesmo orçamento.
        Os blocos de item são gerados dinamicamente pelo js/app.js (criarBlocoItem). -->
   <div id="itens-equipamento"></div>

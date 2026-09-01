@@ -51,6 +51,17 @@ function criarBlocoItem() {
     '</div>' +
     '<p class="erro item-erro" hidden></p>' +
 
+    '<div class="item-instalacao">' +
+      '<label>Instalação</label>' +
+      '<select data-field="instalacao" required>' +
+        opcoesHtml(['Não', 'Pelo representante', 'Por equipe credenciada pela FixDoor'], true) +
+      '</select>' +
+      '<div class="campo-valor-instalacao-item" hidden>' +
+        '<label>Valor da instalação por equipamento</label>' +
+        '<input type="text" data-field="valor_instalacao" inputmode="numeric" placeholder="R$ 0,00">' +
+      '</div>' +
+    '</div>' +
+
     '<fieldset class="campos-seccional-item" hidden disabled>' +
       '<legend>Especificações técnicas — Porta Seccional</legend>' +
 
@@ -139,6 +150,19 @@ function wireBlocoItem(bloco) {
   const camposPortal = bloco.querySelector('.campos-portal-item');
   const itemErro = bloco.querySelector('.item-erro');
 
+  const instalacaoSelect = bloco.querySelector('.item-instalacao [data-field="instalacao"]');
+  const campoValorInstalacao = bloco.querySelector('.campo-valor-instalacao-item');
+  const valorInstalacaoInput = bloco.querySelector('[data-field="valor_instalacao"]');
+  instalacaoSelect.addEventListener('change', () => {
+    const mostrar = instalacaoSelect.value === 'Pelo representante';
+    campoValorInstalacao.hidden = !mostrar;
+    valorInstalacaoInput.required = mostrar;
+    if (!mostrar) valorInstalacaoInput.value = '';
+  });
+  valorInstalacaoInput.addEventListener('input', () => {
+    valorInstalacaoInput.value = maskMoeda(valorInstalacaoInput.value);
+  });
+
   bloco.querySelectorAll('.item-equipamento-toggle .toggle-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const valor = btn.dataset.value;
@@ -197,6 +221,11 @@ function lerCamposDoItem(bloco) {
   const nomeItem = bloco.querySelector('[data-field="nome_item"]').value.trim();
   if (nomeItem) campos.nome_item = nomeItem;
 
+  const instalacaoEl = bloco.querySelector('.item-instalacao [data-field="instalacao"]');
+  if (instalacaoEl.value) campos.instalacao = instalacaoEl.value;
+  const valorInstalacaoEl = bloco.querySelector('.item-instalacao [data-field="valor_instalacao"]');
+  if (valorInstalacaoEl.value) campos.valor_instalacao = valorInstalacaoEl.value;
+
   if (!ativo) return campos;
 
   ativo.querySelectorAll('[data-field]').forEach((el) => {
@@ -212,14 +241,30 @@ function lerCamposDoItem(bloco) {
   return campos;
 }
 
+// Mensagem de erro geral, sempre visível perto do botão de enviar (além do erro
+// específico em cada bloco), pra o usuário nunca ficar sem saber por que o
+// envio não foi pra frente.
+function mostrarErroGeral(mensagem) {
+  statusEl.hidden = false;
+  statusEl.className = 'erro-envio';
+  statusEl.textContent = mensagem;
+}
+
 // Valida todos os blocos de item; devolve os itens prontos ou null se algo estiver faltando.
+// Sempre que algo estiver errado, rola a tela até o primeiro problema encontrado.
 function validarEColetarItens() {
   const blocos = [...itensContainer.querySelectorAll('.item-equipamento')];
-  let valido = true;
 
-  if (blocos.length === 0) valido = false;
+  if (blocos.length === 0) {
+    mostrarErroGeral('Adicione ao menos um equipamento antes de enviar.');
+    btnAddItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return null;
+  }
 
-  const itens = blocos.map((bloco) => {
+  let primeiroInvalido = null;
+  const itens = [];
+
+  blocos.forEach((bloco) => {
     const itemErro = bloco.querySelector('.item-erro');
     itemErro.hidden = true;
 
@@ -227,24 +272,20 @@ function validarEColetarItens() {
     if (!equipamento) {
       itemErro.textContent = 'Escolha um equipamento antes de continuar.';
       itemErro.hidden = false;
-      valido = false;
-      return null;
+      if (!primeiroInvalido) primeiroInvalido = bloco;
+      return;
     }
 
-    if (equipamento === 'Portal de Selamento') {
-      const temAcessorio = bloco.querySelectorAll('.campos-portal-item input[data-field="acessorios"]:checked').length > 0;
-      if (!temAcessorio) {
-        itemErro.textContent = 'Escolha ao menos um acessório.';
-        itemErro.hidden = false;
-        valido = false;
-        return null;
-      }
-    }
-
-    return lerCamposDoItem(bloco);
+    itens.push(lerCamposDoItem(bloco));
   });
 
-  return valido ? itens : null;
+  if (primeiroInvalido) {
+    mostrarErroGeral('Corrija os campos destacados em vermelho acima.');
+    primeiroInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return null;
+  }
+
+  return itens;
 }
 
 // ===== Estado / Cidade (API do IBGE) =====
@@ -314,21 +355,6 @@ cnpjInput.addEventListener('input', () => { cnpjInput.value = maskCNPJ(cnpjInput
 
 const telefoneInput = document.getElementById('telefone_cliente');
 telefoneInput.addEventListener('input', () => { telefoneInput.value = maskTelefone(telefoneInput.value); });
-
-const valorInstalacaoInput = document.getElementById('valor_instalacao');
-valorInstalacaoInput.addEventListener('input', () => { valorInstalacaoInput.value = maskMoeda(valorInstalacaoInput.value); });
-
-// ===== Instalação: mostra "Valor da instalação" só quando for pelo representante =====
-
-const instalacaoSelect = document.getElementById('instalacao');
-const campoValorInstalacao = document.getElementById('campo-valor-instalacao');
-
-instalacaoSelect.addEventListener('change', () => {
-  const mostrar = instalacaoSelect.value === 'Pelo representante';
-  campoValorInstalacao.hidden = !mostrar;
-  valorInstalacaoInput.required = mostrar;
-  if (!mostrar) valorInstalacaoInput.value = '';
-});
 
 // ===== Anexos: escolhas múltiplas se acumulam numa lista, cada um removível =====
 
@@ -422,8 +448,6 @@ function iniciarNovaSolicitacao() {
   resetarItens();
   arquivosSelecionados = [];
   renderizarListaAnexos();
-  campoValorInstalacao.hidden = true;
-  valorInstalacaoInput.required = false;
   cidadeSelect.innerHTML = '<option value="" selected disabled>Selecione o estado primeiro</option>';
   cidadeSelect.disabled = true;
   btnEnviar.hidden = false;
